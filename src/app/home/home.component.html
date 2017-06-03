@@ -1,4 +1,20 @@
-<p>
-  home works!
-</p>
-<button md-raised-button color="primary">TestBtn</button>
+<md-toolbar color="primary">
+  <button md-icon-button (click)="socProvider.login()">
+    <md-icon svgIcon="facebook-box"></md-icon>
+  </button>
+  <span class="spacer"></span>
+  <button md-icon-button>
+    <md-icon svgIcon="git"></md-icon>
+  </button>
+</md-toolbar>
+
+<button md-raised-button (click)="browse()">browse</button>
+
+<od-virtualscroll [vsData]="vsService.data$" [vsOptions]="vsService.options$" *ngIf="vsService.data$">
+  <ng-template let-item let-row="row" let-column="column">
+    <div class="image-wrp">
+      <img [hidden]="!item.loaded" src="{{item.images[item.images.length - 1].source}}" (load)="item.loaded = true"/>
+    </div>
+  </ng-template>
+</od-virtualscroll>
+

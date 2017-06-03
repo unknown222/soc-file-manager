@@ -1,0 +1,14 @@
+<h1 md-dialog-title>Select folder</h1>
+<div md-dialog-content>
+  <md-nav-list>
+    <h3 md-subheader>Albums</h3>
+    <md-list-item *ngFor="let album of albums" (click)="selectAlbum(album)">
+      <md-icon md-list-icon>folder</md-icon>
+      <h4 md-line>{{album.name}}</h4>
+      <p md-line> {{album.created_time | date}} </p>
+    </md-list-item>
+  </md-nav-list>
+</div>
+<div md-dialog-actions>
+  <button md-button (click)="dialogRef.close()">Cancel</button>
+</div>
