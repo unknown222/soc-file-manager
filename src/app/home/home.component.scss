@@ -8,28 +8,16 @@
   flex: 1 1 auto;
 }
 
-od-virtualscroll {
+md-tab-group {
   flex: 1;
 }
 
-.image-wrp {
-  box-sizing: border-box;
-  display: inline-block;
-  height: 202px;
-  margin-right: -5px;
-  position: relative;
-  width: 202px;
-
-  img {
-    height: 202px;
-    object-fit: cover;
-    width: 202px;
-  }
+/deep/ .mat-tab-body-wrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+/deep/ .mat-tab-body-content {
+  display: flex;
 }
 
-/deep/ .od-scroll-container {
-  margin: 0 auto;
-}
-
-/deep/ od-virtualrow {
-}

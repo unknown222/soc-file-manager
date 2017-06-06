@@ -1,0 +1,15 @@
+<md-card class="example-card" *ngFor="let task of worker.activeTasks">
+  <md-card-header>
+    <md-card-title>From: {{task.from}}</md-card-title>
+    <md-card-subtitle>To: {{task.to}}</md-card-subtitle>
+  </md-card-header>
+  <img md-card-image *ngIf="task.current.url" [src]="task.current.url">
+  <md-card-content>
+    <p>
+      PHOTO DESCRIPTION
+    </p>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button>PAUSE</button>
+  </md-card-actions>
+</md-card>

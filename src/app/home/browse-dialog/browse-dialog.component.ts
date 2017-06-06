@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MdDialog, MdDialogRef } from '@angular/material';
 import { SocialProviderService } from '../../core/social-provider/social-provider.service';
 import { ApiProvider } from '../../core/social-provider/entities/api-provider';
+import { CreateAlbumDialogComponent } from '../create-album-dialog/create-album-dialog.component';
 
 @Component({
   selector: 'app-browse-dialog',
@@ -14,6 +15,7 @@ export class BrowseDialogComponent implements OnInit {
   apiProvider: ApiProvider;
 
   constructor(public dialogRef: MdDialogRef<BrowseDialogComponent>,
+              private dialog: MdDialog,
               public socProvider: SocialProviderService) {
   }
 
@@ -26,6 +28,15 @@ export class BrowseDialogComponent implements OnInit {
 
   selectAlbum(album) {
     this.dialogRef.close(album);
+  }
+
+  createAlbum(album) {
+    let dialogRef = this.dialog.open(CreateAlbumDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      this.apiProvider.getInfo(result.id).subscribe(result => {
+        this.albums.push(result);
+      })
+    });
   }
 
 }

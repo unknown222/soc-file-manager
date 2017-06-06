@@ -1,0 +1,10 @@
+<h1 md-dialog-title>Create album</h1>
+<div md-dialog-content>
+  <md-input-container>
+    <input mdInput [(ngModel)]="params.name" placeholder="album name" value="">
+  </md-input-container>
+</div>
+<div md-dialog-actions>
+  <button md-button (click)="createAlbum(params)">Create</button>
+  <button md-button (click)="dialogRef.close()">Cancel</button>
+</div>

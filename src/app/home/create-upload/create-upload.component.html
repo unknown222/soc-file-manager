@@ -1,0 +1,15 @@
+<div>
+  <button md-raised-button (click)="browse()">browseFrom</button>
+  <button md-raised-button (click)="browseTo()">browseTo</button>
+  <button md-raised-button (click)="start(params)">start</button>
+</div>
+
+<div>{{params | json}}</div>
+
+<od-virtualscroll [vsData]="vsService.data$" [vsOptions]="vsService.options$" *ngIf="vsService.data$">
+  <ng-template let-item let-row="row" let-column="column">
+    <div class="image-wrp">
+      <img [hidden]="!item.loaded" src="{{item.images[item.images.length - 1].source}}" (load)="item.loaded = true"/>
+    </div>
+  </ng-template>
+</od-virtualscroll>

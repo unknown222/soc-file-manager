@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { ConnectableObservable } from 'rxjs/Rx';
 import { Observer } from 'rxjs/Observer';
 import { Subscription } from 'rxjs/Subscription';
-import { SocialProviderService } from '../core/social-provider/social-provider.service';
+import { SocialProviderService } from '../../core/social-provider/social-provider.service';
 
 @Injectable()
 export class VirtualScrollService {

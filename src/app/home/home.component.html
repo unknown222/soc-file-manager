@@ -1,5 +1,5 @@
 <md-toolbar color="primary">
-  <button md-icon-button (click)="socProvider.login()">
+  <button md-icon-button (click)="login()">
     <md-icon svgIcon="facebook-box"></md-icon>
   </button>
   <span class="spacer"></span>
@@ -7,14 +7,11 @@
     <md-icon svgIcon="git"></md-icon>
   </button>
 </md-toolbar>
-
-<button md-raised-button (click)="browse()">browse</button>
-
-<od-virtualscroll [vsData]="vsService.data$" [vsOptions]="vsService.options$" *ngIf="vsService.data$">
-  <ng-template let-item let-row="row" let-column="column">
-    <div class="image-wrp">
-      <img [hidden]="!item.loaded" src="{{item.images[item.images.length - 1].source}}" (load)="item.loaded = true"/>
-    </div>
-  </ng-template>
-</od-virtualscroll>
-
+<md-tab-group>
+  <md-tab label="Create upload">
+    <app-create-upload></app-create-upload>
+  </md-tab>
+  <md-tab label="In-progress">
+    <app-in-progress></app-in-progress>
+  </md-tab>
+</md-tab-group>
