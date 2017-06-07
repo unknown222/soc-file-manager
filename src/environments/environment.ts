@@ -7,9 +7,9 @@ import { Environment } from './environment.interface';
 
 export const environment: Environment = {
   production: false,
-  // fbAppConfig: {
-  //   appId: "XXXXXXXX",
-  //   xfbml: true,
-  //   version: "v2.9"
-  // }
+  fbAppConfig: {
+    appId: "XXXXXXXX",
+    xfbml: true,
+    version: "v2.9"
+  }
 };
