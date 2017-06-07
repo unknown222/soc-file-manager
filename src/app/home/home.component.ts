@@ -8,6 +8,7 @@ import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/toPromise';
 import { VirtualScrollService } from './create-upload/virtual-scroll.service';
 import { WorkerService } from '../core/worker/worker.service';
+import { AuthService } from '../core/auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +18,7 @@ import { WorkerService } from '../core/worker/worker.service';
 export class HomeComponent implements OnInit {
 
   constructor(public socProvider: SocialProviderService,
+              public authService: AuthService,
               iconRegistry: MdIconRegistry,
               sanitizer: DomSanitizer) {
     iconRegistry.addSvgIcon(

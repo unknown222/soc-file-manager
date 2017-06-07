@@ -30,7 +30,7 @@ export class BrowseDialogComponent implements OnInit {
     this.dialogRef.close(album);
   }
 
-  createAlbum(album) {
+  createAlbum() {
     let dialogRef = this.dialog.open(CreateAlbumDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
       this.apiProvider.getInfo(result.id).subscribe(result => {
