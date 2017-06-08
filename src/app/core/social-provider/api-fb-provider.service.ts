@@ -37,6 +37,9 @@ export class ApiFbProviderService implements ApiProvider {
           this.status = ProviderStatuses.INIT;
           observer.next(response);
           observer.complete();
+        }).catch(e => {
+          this.status = ProviderStatuses.ERROR;
+          observer.error('Error on init fb api');
         });
       } else {
         this.status = ProviderStatuses.ERROR;
@@ -76,6 +79,10 @@ export class ApiFbProviderService implements ApiProvider {
         return response;
       });
     return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(promise)));
+  }
+
+  getUserInfo() {
+    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(this.fb.api('/me', 'get', {fields: "id,name,picture"}))));
   }
 
   getInfo(id: string) {

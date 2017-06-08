@@ -1,0 +1,22 @@
+<button class="status-button" md-button (click)="onButtonClick()">
+  <div class="button-content">
+    <img class="avatar" [src]="userInfo?.picture.data.url"
+         *ngIf="provider.status === providerStatuses.CONNECTED && userInfo"/>
+    <md-icon [svgIcon]="icons[provider.name]"
+             *ngIf="provider.status !== providerStatuses.CONNECTED"></md-icon>
+    <div class="status-indicator" >
+      <md-spinner *ngIf="provider.status === providerStatuses.UNDEFINED"
+                  color="accent" strokeWidth="12"></md-spinner>
+      <md-icon color="warn" *ngIf="provider.status === providerStatuses.ERROR">error</md-icon>
+      <md-icon [svgIcon]="icons[provider.name]" *ngIf="provider.status === providerStatuses.CONNECTED"></md-icon>
+      <span [mdMenuTriggerFor]="menu"></span>
+    </div>
+  </div>
+</button>
+
+<md-menu #menu="mdMenu">
+  <button md-menu-item (click)="logout()">
+    <md-icon>exit_to_app</md-icon>
+    <span>Logout</span>
+  </button>
+</md-menu>

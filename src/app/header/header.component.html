@@ -1,0 +1,8 @@
+<md-toolbar color="primary">
+  <app-provider-status *ngFor="let provider of providers" [provider]="provider">
+  </app-provider-status>
+  <span class="spacer"></span>
+  <button md-icon-button>
+    <md-icon svgIcon="git"></md-icon>
+  </button>
+</md-toolbar>

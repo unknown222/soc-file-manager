@@ -13,6 +13,7 @@ export interface ApiProvider {
   login();
   logout();
   checkLoginStatus();
+  getUserInfo(): Observable<any>;
   getInfo(id: string): Observable<any>;
   getPages(userId: string): Observable<any>;
   getAlbums(pageId: string): Observable<any>;
