@@ -6,6 +6,7 @@ import { ConnectableObservable } from 'rxjs/Rx';
 import { Observer } from 'rxjs/Observer';
 import { Subscription } from 'rxjs/Subscription';
 import { SocialProviderService } from '../../core/social-provider/social-provider.service';
+import { Providers } from '../../core/social-provider/entities/providers.enum';
 
 @Injectable()
 export class VirtualScrollService {
@@ -53,7 +54,7 @@ export class VirtualScrollService {
   }).publish();
 
   initScroll(album) {
-    let provider = this.socService.getProviderByName('FB');
+    let provider = this.socService.getProviderByName(Providers.FB);
     provider.getPhotos(album.id).subscribe(response => {
       Array.prototype.push.apply(this.photos, response.data);
       this.nextPhotos = response.paging.next;

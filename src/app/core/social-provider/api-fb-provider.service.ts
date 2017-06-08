@@ -2,64 +2,84 @@
  * Created by Unknown on 6/2/2017.
  */
 import { Injectable } from '@angular/core';
-import { FacebookService, InitParams, LoginOptions, LoginResponse } from 'ngx-facebook';
-import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
-import { Observable } from 'rxjs/Observable';
+import { FacebookService, LoginResponse } from 'ngx-facebook';
 import { ApiProvider } from './entities/api-provider';
 import { Http } from '@angular/http';
+import { environment } from '../../../environments/environment';
+import { Providers } from './entities/providers.enum';
+import { ProviderStatuses } from './entities/provider-statuses.enum';
+
+import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
+import { Observable } from 'rxjs/Observable';
+import { AsyncSubject } from 'rxjs/AsyncSubject';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/defer';
+import 'rxjs/add/operator/mergeMap';
 
 @Injectable()
 export class ApiFbProviderService implements ApiProvider {
 
-  name: string = 'FB';
+  name = Providers.FB;
+  status = ProviderStatuses.UNDEFINED;
+  initRequest = new AsyncSubject();
+
   http: Http;
+
   constructor(private fb: FacebookService, http: Http) {
     this.http = http;
-    let initParams: InitParams = {
-      appId: '238618126543417',
-      xfbml: true,
-      version: 'v2.9'
-    };
-
-    fb.init(initParams);
-    this.checkLoginStatus();
+    this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest);
   }
 
-  login() {
-    const options: LoginOptions = {
-      scope: 'public_profile,user_photos,pages_show_list,publish_actions,user_managed_groups',
-      return_scopes: true,
-      enable_profile_selector: true
-    };
+  init() {
+    return Observable.create(observer => {
+      if (environment.fbAppConfig) {
+        this.fb.init(environment.fbAppConfig.initParams).then(response => {
+          this.status = ProviderStatuses.INIT;
+          observer.next(response);
+          observer.complete();
+        });
+      } else {
+        this.status = ProviderStatuses.ERROR;
+        observer.error('No fb api configs for provider');
+      }
+    });
 
-    this.fb.login(options)
-      .then((response: LoginResponse) => {
-        console.log('Logged in', response)
-      })
-      .catch(e => console.error('Error logging in'));
   }
 
   checkLoginStatus() {
-    return this.fb.getLoginStatus()
-      .then(response => {
-        console.log(response);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    return Observable.defer(() => Observable.fromPromise(this.fb.getLoginStatus().then(response => {
+      if (response.status === 'connected') {
+        this.status = ProviderStatuses.CONNECTED;
+      }
+      return response;
+    })));
   }
 
+  login() {
+    let promise = this.fb.login(environment.fbAppConfig.loginOptions)
+      .then((response: LoginResponse) => {
+        if (response.status === 'connected') {
+          this.status = ProviderStatuses.CONNECTED;
+        }
+        return response;
+      });
+
+    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(promise)));
+  }
+
+
   logout() {
-    throw new Error('Method not implemented.');
+    let promise = this.fb.logout()
+      .then((response: LoginResponse) => {
+        this.status = ProviderStatuses.INIT;
+        this.cleanupCookies();
+        return response;
+      });
+    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(promise)));
   }
 
   getInfo(id: string) {
-    let promise = this.fb.api(id).then(response => {
-      return response;
-    }).catch(e => {
-      console.log(e);
-    });
-    return PromiseObservable.create(promise);
+    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(this.fb.api(id))));
   }
 
   getPages(userId: string): Observable<any> {
@@ -118,5 +138,19 @@ export class ApiFbProviderService implements ApiProvider {
       return response
     }).catch(console.error);
     return PromiseObservable.create(promise);
+  }
+
+  cleanupCookies() {
+    //there seems to be some bug with fb.logout method which require to edit cookies, or getLoginStatus won't work
+    function delete_cookie(name)
+    {
+      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+    }
+    let cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++)
+    {
+      if(cookies[i].split("=")[0].indexOf("fblo_") != -1)
+        delete_cookie(cookies[i].split("=")[0]);
+    }
   }
 }

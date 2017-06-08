@@ -1,7 +1,11 @@
+import { InitParams, LoginOptions } from 'ngx-facebook';
 /**
  * Created by Unknown on 6/7/2017.
  */
 export interface Environment {
   production: true | false,
-  fbAppConfig?: any;
+  fbAppConfig?: {
+    initParams: InitParams
+    loginOptions: LoginOptions
+  };
 }

@@ -3,6 +3,7 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 import { SocialProviderService } from '../../core/social-provider/social-provider.service';
 import { ApiProvider } from '../../core/social-provider/entities/api-provider';
 import { CreateAlbumDialogComponent } from '../create-album-dialog/create-album-dialog.component';
+import { Providers } from '../../core/social-provider/entities/providers.enum';
 
 @Component({
   selector: 'app-browse-dialog',
@@ -20,7 +21,7 @@ export class BrowseDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.apiProvider = this.socProvider.getProviderByName('FB');
+    this.apiProvider = this.socProvider.getProviderByName(Providers.FB);
     this.apiProvider.getAlbums('/me').subscribe(albums => {
       this.albums = albums;
     })

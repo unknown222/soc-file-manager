@@ -1,11 +1,15 @@
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
+import { Providers } from './providers.enum';
+import { ProviderStatuses } from './provider-statuses.enum';
 /**
  * Created by Unknown on 6/2/2017.
  */
 export interface ApiProvider {
-  name: string;
+  name: Providers;
+  status: ProviderStatuses;
   http: Http;
+  init();
   login();
   logout();
   checkLoginStatus();

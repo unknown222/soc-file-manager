@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MdDialogRef } from '@angular/material';
 import { SocialProviderService } from '../../core/social-provider/social-provider.service';
 import { ApiProvider } from '../../core/social-provider/entities/api-provider';
+import { Providers } from '../../core/social-provider/entities/providers.enum';
 
 @Component({
   selector: 'app-create-album-dialog',
@@ -23,7 +24,7 @@ export class CreateAlbumDialogComponent implements OnInit {
   }
 
   createAlbum(params) {
-    this.apiProvider = this.socProvider.getProviderByName('FB');
+    this.apiProvider = this.socProvider.getProviderByName(Providers.FB);
     this.apiProvider.createAlbum('/me', params).subscribe(result => {
       this.dialogRef.close(result);
     })

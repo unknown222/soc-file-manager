@@ -8,8 +8,15 @@ import { Environment } from './environment.interface';
 export const environment: Environment = {
   production: false,
   fbAppConfig: {
-    appId: "XXXXXXXX",
-    xfbml: true,
-    version: "v2.9"
+    initParams: {
+      appId: 'xxxxxxxxxxxx',
+      xfbml: true,
+      version: 'v2.9'
+    },
+    loginOptions: {
+      scope: 'public_profile,user_photos,pages_show_list,publish_actions,user_managed_groups',
+      return_scopes: true,
+      enable_profile_selector: true
+    }
   }
 };

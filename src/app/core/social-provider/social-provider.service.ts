@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiProvider } from './entities/api-provider';
 import { ApiFbProviderService } from './api-fb-provider.service';
+import { Providers } from './entities/providers.enum';
 
 @Injectable()
 export class SocialProviderService {
@@ -19,7 +20,7 @@ export class SocialProviderService {
     throw new Error('Method not implemented.');
   }
 
-  getProviderByName(name: string) : ApiProvider {
+  getProviderByName(name: Providers) : ApiProvider {
     return this.providers.find(provider => provider.name === name);
   }
 
