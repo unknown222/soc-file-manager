@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Providers } from '../core/social-provider/entities/providers.enum';
-import { ProviderStatuses } from '../core/social-provider/entities/provider-statuses.enum';
 import { SocialProviderService } from '../core/social-provider/social-provider.service';
 
 @Component({
