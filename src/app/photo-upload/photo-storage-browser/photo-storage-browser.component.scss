@@ -1,0 +1,30 @@
+@import '../../../resources/theme';
+
+:host {
+  flex: 1 1 0;
+  display: flex;
+}
+
+tree-root {
+  flex: 1 1 0;
+  padding-left: 10px;
+}
+
+tree-root.custom-theme {
+  /deep/ div.tree {
+    padding: 10px 0;
+    .node-content-wrapper:not(.node-content-wrapper-active):hover {
+      background-color: mat-color($accent, A100);
+    }
+
+    .node-content-wrapper-active {
+      background-color: transparent;
+      box-shadow: none;
+      border: none;
+    }
+    .node-content-wrapper-focused {
+      background-color: mat-color($accent);
+    }
+  }
+}
+

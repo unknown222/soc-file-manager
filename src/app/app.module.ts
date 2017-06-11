@@ -6,9 +6,10 @@ import { AppComponent } from './app.component';
 import 'hammerjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
-import { MdButtonModule, MdIconModule, MdMenuModule, MdProgressSpinnerModule, MdToolbarModule } from '@angular/material';
+import { MdButtonModule, MdIconModule, MdMenuModule, MdProgressSpinnerModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
 import { HeaderComponent } from './header/header.component';
 import { ProviderStatusComponent } from './header/provider-status/provider-status.component';
+import { UiModule } from './ui/ui.module';
 
 @NgModule({
   declarations: [
@@ -17,14 +18,16 @@ import { ProviderStatusComponent } from './header/provider-status/provider-statu
     ProviderStatusComponent
   ],
   imports: [
+    AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
     CoreModule,
-    AppRoutingModule,
     MdToolbarModule,
     MdButtonModule,
     MdProgressSpinnerModule,
-    MdMenuModule
+    MdMenuModule,
+    MdSidenavModule,
+    UiModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]

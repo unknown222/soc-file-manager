@@ -23,8 +23,8 @@ export class SocialProviderService {
     throw new Error('Method not implemented.');
   }
 
-  getProviderByName(name: Providers): ApiProvider {
-    return this.providers.find(provider => provider.name === name);
+  getProvider(type: Providers): ApiProvider {
+    return this.providers.find(provider => provider.type === type);
   }
 
 }

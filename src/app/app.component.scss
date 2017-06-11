@@ -6,3 +6,22 @@
   flex-direction: column;
 }
 
+md-sidenav-container {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+
+  md-sidenav {
+    display: flex;
+    height: 100%;
+    max-width: 100vw;
+    min-width: 250px;
+  }
+}
+
+.content {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

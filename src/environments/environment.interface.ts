@@ -5,7 +5,11 @@ import { InitParams, LoginOptions } from 'ngx-facebook';
 export interface Environment {
   production: true | false,
   fbAppConfig?: {
-    initParams: InitParams
-    loginOptions: LoginOptions
+    initParams: InitParams;
+    loginOptions: LoginOptions;
   };
+  vkAppConfig?: {
+    initParams: any
+    loginOptions: any
+  }
 }

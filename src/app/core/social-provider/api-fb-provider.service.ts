@@ -15,11 +15,17 @@ import { AsyncSubject } from 'rxjs/AsyncSubject';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/defer';
 import 'rxjs/add/operator/mergeMap';
+import { User } from './entities/user';
+import { PageWithLoadingPermissions } from './entities/page-with-loading-permissons';
+import { ProviderNames } from './entities/provider-names';
+import { Album } from './entities/album';
 
 @Injectable()
 export class ApiFbProviderService implements ApiProvider {
 
-  name = Providers.FB;
+
+  name = ProviderNames[ Providers.FB ];
+  type = Providers.FB;
   status = ProviderStatuses.UNDEFINED;
   initRequest = new AsyncSubject();
 
@@ -59,47 +65,58 @@ export class ApiFbProviderService implements ApiProvider {
   }
 
   login() {
-    let promise = this.fb.login(environment.fbAppConfig.loginOptions)
+    let request = Observable.defer(() => Observable.fromPromise(this.fb.login(environment.fbAppConfig.loginOptions)
       .then((response: LoginResponse) => {
         if (response.status === 'connected') {
           this.status = ProviderStatuses.CONNECTED;
         }
         return response;
-      });
+      }).catch(e => e)));
 
-    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(promise)));
+    return this.initRequest.mergeMap(() => request);
   }
 
-
   logout() {
-    let promise = this.fb.logout()
+    let request = Observable.defer(() => Observable.fromPromise(this.fb.logout()
       .then((response: LoginResponse) => {
         this.status = ProviderStatuses.INIT;
         this.cleanupCookies();
         return response;
-      });
-    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(promise)));
+      })));
+    return this.initRequest.mergeMap(() => request);
   }
 
   getUserInfo() {
-    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(this.fb.api('/me', 'get', {fields: "id,name,picture"}))));
+    let request = Observable.defer(() => Observable.fromPromise(this.fb.api('/me', 'get', { fields: 'id,name,picture' }).then(response => {
+      let photoUrl;
+      if (response.picture) {
+        photoUrl = response.picture.data.url
+      }
+      return new User(response.id, response.name, photoUrl);
+    })));
+    return this.initRequest.mergeMap(() => request);
   }
 
-  getInfo(id: string) {
-    return this.initRequest.mergeMap(() => Observable.defer(() => Observable.fromPromise(this.fb.api(id))));
+  getPagesWithLoadingPermissions(): Observable<Array<PageWithLoadingPermissions>> {
+    let request = Observable.defer(() => Observable.fromPromise(this.fb.api('/me/groups', 'get', { fields: 'id,description,name,photo' }).then(response => {
+      let pagesWithLoadingPermissions: Array<PageWithLoadingPermissions> = [ new PageWithLoadingPermissions('me', this.type, 'My page') ];
+      for (let group of response.data) {
+        pagesWithLoadingPermissions.push(new PageWithLoadingPermissions(group.id, this.type, group.name, group.photo, group.description));
+      }
+      return pagesWithLoadingPermissions;
+    })));
+    return this.initRequest.mergeMap(() => request);
   }
 
-  getPages(userId: string): Observable<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  getAlbums(pageId: string): Observable<any> {
-    let promise = this.fb.api(pageId + '/albums').then(response => {
-      return response.data;
-    }).catch(e => {
-      console.log(e);
-    });
-    return PromiseObservable.create(promise);
+  getAlbums(pageId: string): Observable<Array<Album>> {
+    let request = Observable.defer(() => Observable.fromPromise(this.fb.api(pageId + '/albums', 'get', { fields: 'id,name,description' }).then(response => {
+      let albums: Array<PageWithLoadingPermissions> = [];
+      for (let album of response.data) {
+        albums.push(new Album(album.id, this.type, album.name, album.photo, album.description));
+      }
+      return albums;
+    })));
+    return this.initRequest.mergeMap(() => request);
   }
 
   getPhotos(albumId: string): Observable<any> {
@@ -149,15 +166,14 @@ export class ApiFbProviderService implements ApiProvider {
 
   cleanupCookies() {
     //there seems to be some bug with fb.logout method which require to edit cookies, or getLoginStatus won't work
-    function delete_cookie(name)
-    {
+    function delete_cookie(name) {
       document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
     }
-    let cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++)
-    {
-      if(cookies[i].split("=")[0].indexOf("fblo_") != -1)
-        delete_cookie(cookies[i].split("=")[0]);
+
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      if (cookies[ i ].split('=')[ 0 ].indexOf('fblo_') != -1)
+        delete_cookie(cookies[ i ].split('=')[ 0 ]);
     }
   }
 }

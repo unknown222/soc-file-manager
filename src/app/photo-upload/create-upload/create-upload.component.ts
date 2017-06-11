@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { VirtualScrollService } from './virtual-scroll.service';
 import { WorkerService } from '../../core/worker/worker.service';
 import { MdDialog } from '@angular/material';
 import { BrowseDialogComponent } from '../browse-dialog/browse-dialog.component';
+import { PhotoStorageBrowserComponent } from '../photo-storage-browser/photo-storage-browser.component';
+import { SidenavPortalService } from '../../ui/sidenav-portal/sidenav-portal.service';
 
 @Component({
   selector: 'app-create-upload',
@@ -23,6 +25,8 @@ export class CreateUploadComponent implements OnInit {
 
 
   constructor(public vsService: VirtualScrollService,
+              private sideNavPortal: SidenavPortalService,
+              private injector: Injector,
               private worker: WorkerService,
               private dialog: MdDialog,) {
   }
@@ -43,11 +47,16 @@ export class CreateUploadComponent implements OnInit {
   }
 
   browseTo() {
-    let dialogRef = this.dialog.open(BrowseDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
-      this.params.to = result.id;
-      console.log(result);
+    this.sideNavPortal.openSidenavWithComponent(this.injector, PhotoStorageBrowserComponent, {
+      align: 'end',
+      resolve: (response) => {
+       this.setDestination(response);
+      }
     });
+  }
+
+  setDestination(response) {
+    console.log(response);
   }
 
 }

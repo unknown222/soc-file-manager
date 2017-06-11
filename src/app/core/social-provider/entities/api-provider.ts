@@ -2,21 +2,24 @@ import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { Providers } from './providers.enum';
 import { ProviderStatuses } from './provider-statuses.enum';
+import { User } from './user';
+import { PageWithLoadingPermissions } from './page-with-loading-permissons';
+import { Album } from './album';
 /**
  * Created by Unknown on 6/2/2017.
  */
 export interface ApiProvider {
-  name: Providers;
+  name: string;
+  type: Providers;
   status: ProviderStatuses;
   http: Http;
-  init();
-  login();
-  logout();
-  checkLoginStatus();
-  getUserInfo(): Observable<any>;
-  getInfo(id: string): Observable<any>;
-  getPages(userId: string): Observable<any>;
-  getAlbums(pageId: string): Observable<any>;
+  init(): Observable<any>;
+  login(): Observable<any>;
+  logout(): Observable<any>;
+  checkLoginStatus(): Observable<any>;
+  getUserInfo(): Observable<User>;
+  getPagesWithLoadingPermissions(): Observable<Array<PageWithLoadingPermissions>>;
+  getAlbums(pageId: any): Observable<Array<Album>>;
   getPhotos(albumId: string): Observable<any>;
   createAlbum(pageId: string, params: any): Observable<any>;
   uploadPhotos(albumId: string, params): Observable<any>;

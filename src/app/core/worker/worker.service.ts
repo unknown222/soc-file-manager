@@ -13,7 +13,7 @@ export class WorkerService {
   }
 
   start(params) {
-    let provider: ApiProvider = this.socService.getProviderByName(Providers.FB);
+    let provider: ApiProvider = this.socService.getProvider(Providers.FB);
     let task: UploadTask = new UploadTask(params.from, params.to, params.photos, provider);
     task.registerUploadTask(this.activeTasks);
     task.executeUploadTask();

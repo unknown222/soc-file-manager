@@ -24,7 +24,7 @@ export class CreateAlbumDialogComponent implements OnInit {
   }
 
   createAlbum(params) {
-    this.apiProvider = this.socProvider.getProviderByName(Providers.FB);
+    this.apiProvider = this.socProvider.getProvider(Providers.FB);
     this.apiProvider.createAlbum('/me', params).subscribe(result => {
       this.dialogRef.close(result);
     })

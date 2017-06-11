@@ -21,7 +21,7 @@ export class BrowseDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.apiProvider = this.socProvider.getProviderByName(Providers.FB);
+    this.apiProvider = this.socProvider.getProvider(Providers.FB);
     this.apiProvider.getAlbums('/me').subscribe(albums => {
       this.albums = albums;
     })
@@ -34,9 +34,7 @@ export class BrowseDialogComponent implements OnInit {
   createAlbum() {
     let dialogRef = this.dialog.open(CreateAlbumDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
-      this.apiProvider.getInfo(result.id).subscribe(result => {
-        this.albums.push(result);
-      })
+
     });
   }
 
