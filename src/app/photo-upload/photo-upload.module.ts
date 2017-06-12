@@ -5,14 +5,12 @@ import { PhotoUploadRoutingModule } from './photo-upload-routing.module';
 import { PhotoUploadComponent } from './photo-upload.component';
 import { VirtualScrollModule } from 'od-virtualscroll';
 import { MdButtonModule, MdCardModule, MdDialogModule, MdIconModule, MdInputModule, MdListModule, MdTabsModule } from '@angular/material';
-import { BrowseDialogComponent } from './browse-dialog/browse-dialog.component';
-import { CreateAlbumDialogComponent } from './create-album-dialog/create-album-dialog.component';
 import { CreateUploadComponent } from './create-upload/create-upload.component';
 import { InProgressComponent } from './in-progress/in-progress.component';
-import { VirtualScrollService } from './create-upload/virtual-scroll.service';
 import { FormsModule } from '@angular/forms';
-import { PhotoStorageBrowserComponent } from './photo-storage-browser/photo-storage-browser.component';
+import { PhotoStorageBrowserComponent } from './create-upload/photo-storage-browser/photo-storage-browser.component';
 import { TreeModule } from 'angular-tree-component';
+import { PhotoScrollerComponent } from './create-upload/photo-scroller/photo-scroller.component';
 
 @NgModule({
   imports: [
@@ -29,9 +27,9 @@ import { TreeModule } from 'angular-tree-component';
     MdButtonModule,
     MdTabsModule
   ],
-  declarations: [ PhotoUploadComponent, BrowseDialogComponent, CreateAlbumDialogComponent, CreateUploadComponent, InProgressComponent, PhotoStorageBrowserComponent ],
-  entryComponents: [ BrowseDialogComponent, CreateAlbumDialogComponent, PhotoStorageBrowserComponent ],
-  providers: [ VirtualScrollService ]
+  declarations: [ PhotoUploadComponent, CreateUploadComponent, InProgressComponent, PhotoStorageBrowserComponent, PhotoScrollerComponent ],
+  entryComponents: [ PhotoStorageBrowserComponent ],
+  providers: []
 })
 export class PhotoUploadModule {
 }

@@ -1,10 +1,9 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { VirtualScrollService } from './virtual-scroll.service';
 import { WorkerService } from '../../core/worker/worker.service';
-import { MdDialog } from '@angular/material';
-import { BrowseDialogComponent } from '../browse-dialog/browse-dialog.component';
-import { PhotoStorageBrowserComponent } from '../photo-storage-browser/photo-storage-browser.component';
+import { PhotoStorageBrowserComponent } from './photo-storage-browser/photo-storage-browser.component';
 import { SidenavPortalService } from '../../ui/sidenav-portal/sidenav-portal.service';
+import { Album } from '../../core/social-provider/entities/album';
+import { Photo } from '../../core/social-provider/entities/photo';
 
 @Component({
   selector: 'app-create-upload',
@@ -13,50 +12,46 @@ import { SidenavPortalService } from '../../ui/sidenav-portal/sidenav-portal.ser
 })
 export class CreateUploadComponent implements OnInit {
 
-
-  params = {
-    from: '1804735613175599',
-    to: '1808095376172956',
-    photos: {
-      from: 0,
-      to: 30
-    }
+  uploadDestination: Album = { id: '427189630995683', owner: '422111521503494', provider: 0, name: '9 June 2017', photoUrl: undefined };
+  uploadSource: Album = {
+    id: 244894685,
+    owner: 115923485,
+    provider: 1,
+    name: 'testAlbumForGroup',
+    photoUrl: 'https://pp.userapi.com/c836536/v836536084/4600d/mAl_ZIEzsw0.jpg'
   };
+  loadedViewPhotos: Array<Photo> = [];
+  uploadConfigs: any;
 
-
-  constructor(public vsService: VirtualScrollService,
-              private sideNavPortal: SidenavPortalService,
+  constructor(private sideNavPortal: SidenavPortalService,
               private injector: Injector,
-              private worker: WorkerService,
-              private dialog: MdDialog,) {
+              private worker: WorkerService) {
   }
 
   ngOnInit() {
-  }
-
-  browse() {
-    let dialogRef = this.dialog.open(BrowseDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
-      this.params.from = result.id;
-      this.vsService.initScroll(result);
-    });
   }
 
   start(params) {
     this.worker.start(params);
   }
 
-  browseTo() {
+  browseSource() {
     this.sideNavPortal.openSidenavWithComponent(this.injector, PhotoStorageBrowserComponent, {
-      align: 'end',
+      align: 'start',
       resolve: (response) => {
-       this.setDestination(response);
+        this.uploadSource = response;
+        this.loadedViewPhotos = [];
       }
     });
   }
 
-  setDestination(response) {
-    console.log(response);
+  browseDestination() {
+    this.sideNavPortal.openSidenavWithComponent(this.injector, PhotoStorageBrowserComponent, {
+      align: 'end',
+      resolve: (response) => {
+        this.uploadDestination = response;
+      }
+    });
   }
 
 }

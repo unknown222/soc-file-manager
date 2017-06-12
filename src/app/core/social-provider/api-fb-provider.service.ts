@@ -19,6 +19,7 @@ import { User } from './entities/user';
 import { PageWithLoadingPermissions } from './entities/page-with-loading-permissons';
 import { ProviderNames } from './entities/provider-names';
 import { Album } from './entities/album';
+import { Photo } from 'app/core/social-provider/entities/photo';
 
 @Injectable()
 export class ApiFbProviderService implements ApiProvider {
@@ -28,7 +29,6 @@ export class ApiFbProviderService implements ApiProvider {
   type = Providers.FB;
   status = ProviderStatuses.UNDEFINED;
   initRequest = new AsyncSubject();
-
   http: Http;
 
   constructor(private fb: FacebookService, http: Http) {
@@ -110,22 +110,41 @@ export class ApiFbProviderService implements ApiProvider {
 
   getAlbums(pageId: string): Observable<Array<Album>> {
     let request = Observable.defer(() => Observable.fromPromise(this.fb.api(pageId + '/albums', 'get', { fields: 'id,name,description' }).then(response => {
-      let albums: Array<PageWithLoadingPermissions> = [];
+      let albums: Array<Album> = [];
       for (let album of response.data) {
-        albums.push(new Album(album.id, this.type, album.name, album.photo, album.description));
+        albums.push(new Album(album.id, pageId, this.type, album.name, album.photo, album.description));
       }
       return albums;
     })));
     return this.initRequest.mergeMap(() => request);
   }
 
-  getPhotos(albumId: string): Observable<any> {
-    let promise = this.fb.api(albumId + '/photos?fields=images').then(response => {
-      return response;
-    }).catch(e => {
-      console.log(e);
-    });
-    return PromiseObservable.create(promise);
+  getPhotos(options: any): Observable<any> {
+    let request;
+    const handlePhotos = (response) => {
+      let photos: Array<Photo> = [];
+      for (let photo of response.data) {
+        photos.push(new Photo(photo.images[ 0 ].source, photo.images[ photo.images.length - 1 ].source, photo.name))
+      }
+
+      let result: any = { data: photos, pointerNext: response.paging.next };
+      if (!result.pointerNext) {
+        result.complete = true;
+      }
+      return result;
+    };
+
+    if (options.source) {
+      request = Observable.defer(() => Observable.fromPromise(this.fb.api(options.source.id + '/photos', 'get', { offset: options.offset || 0, fields: 'images,picture,name' }).then(handlePhotos)));
+    }
+
+    if (options.pointerNext) {
+      request = this.http.get(options.pointerNext)
+        .map(response => response.json())
+        .map(handlePhotos);
+    }
+
+    return this.initRequest.mergeMap(() => request);
   }
 
   createAlbum(pageId: string, params: any): Observable<any> {

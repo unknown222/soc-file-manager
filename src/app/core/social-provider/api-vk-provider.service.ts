@@ -17,6 +17,7 @@ import { User } from './entities/user';
 import { PageWithLoadingPermissions } from './entities/page-with-loading-permissons';
 import { ProviderNames } from './entities/provider-names';
 import { Album } from './entities/album';
+import { Photo } from './entities/photo';
 
 @Injectable()
 export class ApiVkProviderService implements ApiProvider {
@@ -136,7 +137,7 @@ export class ApiVkProviderService implements ApiProvider {
         let albums: Array<Album> = [];
         if (response.response) {
           for (let album of response.response) {
-            albums.push(new Album(album.aid, this.type, album.title, album.thumb_src, album.description));
+            albums.push(new Album(album.aid, pageId, this.type, album.title, album.thumb_src, album.description));
           }
         }
 
@@ -149,8 +150,48 @@ export class ApiVkProviderService implements ApiProvider {
     return this.initRequest.mergeMap(() => request);
   }
 
-  getPhotos(albumId: string): Observable<any> {
-    return undefined;
+  getPhotos(options: any): Observable<any> {
+
+    console.log(options);
+
+    const handlePhotos = (response) => {
+      let photos: Array<Photo> = [];
+      for (let photo of response) {
+        photos.push(new Photo(photo.src_xxxbig, photo.src_big, photo.text))
+      }
+
+      let result: any = { data: photos };
+      if (photos.length < 1) {
+        result.complete = true;
+      }
+      return result;
+    };
+
+    let request = Observable.create(observer => {
+      let requestOptions = {
+        owner_id: -options.source.owner,
+        album_id: options.source.id,
+        count: 25,
+        extended: 1,
+        offset: options.offset
+      };
+
+      if (!requestOptions.offset) delete requestOptions[ 'offset' ];
+      if (!requestOptions.owner_id) delete requestOptions[ 'owner_id' ];
+
+      VK.Api.call('photos.get', requestOptions, response => {
+        console.log(response);
+        if (response.response) {
+          this.zone.run(() => {
+            observer.next(handlePhotos(response.response));
+            observer.complete();
+          });
+        }
+      });
+    });
+
+
+    return this.initRequest.mergeMap(() => request);
   }
 
   createAlbum(pageId: string, params: any): Observable<any> {

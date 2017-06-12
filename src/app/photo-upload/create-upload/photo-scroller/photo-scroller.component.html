@@ -1,0 +1,7 @@
+<od-virtualscroll [vsData]="scrollObserver" [vsOptions]="options" *ngIf="scrollObserver">
+  <ng-template let-item let-row="row" let-column="column">
+    <div class="image-wrp">
+      <img [hidden]="!item._loaded" [src]="item.thumbUrl" (load)="item._loaded = true"/>
+    </div>
+  </ng-template>
+</od-virtualscroll>

@@ -1,0 +1,33 @@
+$photoSize: 250px;
+
+:host {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: $photoSize;
+}
+
+od-virtualscroll {
+  min-height: $photoSize;
+  min-width: $photoSize;
+  overflow-x: hidden;
+}
+
+.image-wrp {
+  box-sizing: border-box;
+  display: inline-block;
+  height: $photoSize;
+  margin-right: -5px;
+  position: relative;
+  width: $photoSize;
+
+  img {
+    height: $photoSize;
+    object-fit: cover;
+    width: $photoSize;
+  }
+}
+
+/deep/ .od-scroll-container {
+  margin: 0 auto;
+}

@@ -1,5 +1,5 @@
 import { NodeType } from './node-types.enum';
-import { Providers } from '../../core/social-provider/entities/providers.enum';
+import { Providers } from '../../../core/social-provider/entities/providers.enum';
 /**
  * Created by Unknown on 6/11/2017.
  */

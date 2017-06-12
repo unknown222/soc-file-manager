@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { SocialProviderService } from '../../core/social-provider/social-provider.service';
-import { ApiProvider } from '../../core/social-provider/entities/api-provider';
+import { SocialProviderService } from '../../../core/social-provider/social-provider.service';
+import { ApiProvider } from '../../../core/social-provider/entities/api-provider';
 import { NodeType } from './node-types.enum';
 import { Node } from './node';
 import { IActionMapping, TreeNode } from 'angular-tree-component';

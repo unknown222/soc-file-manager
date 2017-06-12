@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateAlbumDialogComponent } from './create-album-dialog.component';
+import { PhotoScrollerComponent } from './photo-scroller.component';
 
-describe('CreateAlbumDialogComponent', () => {
-  let component: CreateAlbumDialogComponent;
-  let fixture: ComponentFixture<CreateAlbumDialogComponent>;
+describe('PhotoScrollerComponent', () => {
+  let component: PhotoScrollerComponent;
+  let fixture: ComponentFixture<PhotoScrollerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateAlbumDialogComponent ]
+      declarations: [ PhotoScrollerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateAlbumDialogComponent);
+    fixture = TestBed.createComponent(PhotoScrollerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

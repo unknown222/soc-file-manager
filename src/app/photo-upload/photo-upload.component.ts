@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-photo-upload',
@@ -10,6 +10,10 @@ export class PhotoUploadComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onTabChange() {
+    console.log("change");
   }
 
 }

@@ -4,14 +4,16 @@ import { Providers } from './providers.enum';
  */
 export class Album {
   id: any;
+  owner: any;
   provider: Providers;
   name: string;
-  photoUrl: string;
-  description: string;
+  photoUrl?: string;
+  description?: string;
 
 
-  constructor(id: any, provider: Providers, name: string, photoUrl: string, description: string) {
+  constructor(id: any, owner: any, provider: Providers, name: string, photoUrl: string, description: string) {
     this.id = id;
+    this.owner = owner;
     this.provider = provider;
     this.name = name;
     this.photoUrl = photoUrl;
