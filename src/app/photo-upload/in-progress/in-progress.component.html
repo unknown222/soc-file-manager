@@ -1,15 +1,34 @@
-<md-card class="example-card" *ngFor="let task of worker.activeTasks">
-  <md-card-header>
-    <md-card-title>From: {{task.from}}</md-card-title>
-    <md-card-subtitle>To: {{task.to}}</md-card-subtitle>
-  </md-card-header>
-  <img md-card-image *ngIf="task.current.url" [src]="task.current.url">
+<md-card class="upload-task-card" *ngFor="let task of worker.activeTasks">
+
+  <md-card-title>{{task.uploadSource.name}}</md-card-title>
+  <md-card-subtitle>To: {{task.uploadDestination.name}}</md-card-subtitle>
+
+  <img md-card-image *ngIf="task.currentPhoto.thumbUrl" [src]="task.currentPhoto.thumbUrl">
+
+  <div class="progress-bar-container">
+    <md-progress-bar mode="indeterminate" *ngIf="!task.pause"></md-progress-bar>
+  </div>
+
+
   <md-card-content>
-    <p>
-      PHOTO DESCRIPTION
+    <p *ngIf="task.currentPhoto.description.length > 0">
+      {{task.currentPhoto.description}}
+    </p>
+    <p *ngIf="task.currentPhoto.description.length === 0" class="no-description">
+      No description
     </p>
   </md-card-content>
   <md-card-actions>
-    <button md-button>PAUSE</button>
+    <button md-icon-button *ngIf="!task.pause" (click)="task.pauseUpload()" [disabled]="task.complete">
+      <md-icon>pause</md-icon>
+    </button>
+    <button md-icon-button *ngIf="task.pause" (click)="task.executeUploadTask()">
+      <md-icon>play_arrow</md-icon>
+    </button>
+    <button md-icon-button (click)="task.disposeUploadTask()">
+      <md-icon>stop</md-icon>
+    </button>
+    <span class="spacer"></span>
+    <span class="count">{{task.uploadedPhotos}}/{{task.totalToUpload}}</span>
   </md-card-actions>
 </md-card>

@@ -1,6 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { SocialProviderService } from '../core/social-provider/social-provider.service';
-import { SidenavPortalService } from '../ui/sidenav-portal/sidenav-portal.service';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +11,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  openSidenav() {
-
   }
 
 }

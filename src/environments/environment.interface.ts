@@ -12,4 +12,7 @@ export interface Environment {
     initParams: any
     loginOptions: any
   }
+  gitConfig?: {
+    gitProjectUrl: string
+  }
 }

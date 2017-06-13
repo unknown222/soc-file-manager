@@ -10,10 +10,13 @@
   </div>
 
   <div>
-    <button md-raised-button (click)="start(params)">start</button>
+    <app-photo-upload-configs [configs]="uploadConfigs"></app-photo-upload-configs>
+  </div>
+  <div>
+    <button md-raised-button (click)="start()" [disabled]="!uploadConfigs.valid">start</button>
   </div>
 </div>
 
-<div>{{params | json}}</div>
+
 
 <app-photo-scroller [data]="loadedViewPhotos" [photoSource]="uploadSource"></app-photo-scroller>

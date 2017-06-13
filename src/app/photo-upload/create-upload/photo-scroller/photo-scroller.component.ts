@@ -48,15 +48,18 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
         const subs: Subscription[] = [];
 
         const emitNext = () => {
-          if(this.pointerNext) {
-            this.provider.getPhotos({ pointerNext: this.pointerNext }).subscribe(result => {
+          if (this.pointerNext) {
+            this.provider.getPhotos({
+              pointerNext: this.pointerNext,
+              offset: this.data[ this.data.length - 1 ].index + 1
+            }).subscribe(result => {
               Array.prototype.push.apply(this.data, result.data);
               this.pointerNext = result.pointerNext;
               this.complete = result.complete;
               observer.next(this.data);
             });
           } else {
-            this.provider.getPhotos({ source: this.photoSource, offset: this.data.length }).subscribe(result => {
+            this.provider.getPhotos({ source: this.photoSource, offset: this.data[ this.data.length - 1 ].index + 1 }).subscribe(result => {
               Array.prototype.push.apply(this.data, result.data);
               this.complete = result.complete;
               observer.next(this.data);
@@ -83,7 +86,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
       this.chRef.detectChanges();
       initObserver();
       this.provider = this.socService.getProvider(this.photoSource.provider);
-      this.provider.getPhotos({ source: this.photoSource }).subscribe(result => {
+      this.provider.getPhotos({ source: this.photoSource, offset: 0 }).subscribe(result => {
         Array.prototype.push.apply(this.data, result.data);
         this.pointerNext = result.pointerNext;
         this.complete = result.complete;

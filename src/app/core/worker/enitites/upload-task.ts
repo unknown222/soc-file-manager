@@ -1,65 +1,112 @@
-import { ApiProvider } from '../../social-provider/entities/api-provider';
 import { Observable } from 'rxjs/Observable';
+import { Album } from '../../social-provider/entities/album';
+import { Photo } from '../../social-provider/entities/photo';
+import { SocialProviderService } from '../../social-provider/social-provider.service';
+import { Subscription } from 'rxjs/Subscription';
 /**
  * Created by Unknown on 6/6/2017.
  */
 export class UploadTask {
-  from;
-  to;
-  configs;
-  data;
-  provider: ApiProvider;
-  uploadedPhotos: number = 0;
+  uploadSource: Album;
+  uploadDestination: Album;
+  uploadedData: Array<Photo>;
+  uploadConfigs: { from, to };
   uploadTasksArray;
-  current = {};
-  nextChunk;
 
-  constructor(from, to, configs, provider?, data?) {
-    this.from = from;
-    this.to = to;
-    this.configs = configs;
-    this.provider = provider;
-    this.data = data;
+  totalToUpload: number;
+  uploadedPhotos: number = 0;
+  currentPhoto: Photo;
+  pointerNextChunk: string;
+  complete: boolean = false;
+  pause: boolean = false;
+  currentSubscription: Subscription;
+
+  constructor(options, private socService: SocialProviderService) {
+    this.uploadSource = options.uploadSource;
+    this.uploadDestination = options.uploadDestination;
+    this.uploadedData = options.uploadedData;
+    this.uploadConfigs = options.uploadConfigs;
+    this.totalToUpload = this.uploadConfigs.to - this.uploadConfigs.from + 1;
   }
 
   executeUploadTask() {
-    this.provider.getPhotos(this.from).subscribe(result => this.convertAndLoadPhotos(result))
+    this.pause = false;
+    this.getPhotosToUpload().subscribe(result => {
+      if (!this.pause) {
+        this.convertAndUploadPhotos(result);
+      }
+    });
   }
 
-  convertAndLoadPhotos(result) {
-    this.nextChunk = result.paging.next;
-    console.log(this.configs);
-    let photos = [];
-    for (let photo of result.data.splice(this.configs.from, this.configs.to - this.uploadedPhotos)) {
-      let convertedPhoto: any = { url: photo.images[ 0 ].source };
-      photos.push(convertedPhoto);
+  getPhotosToUpload() {
+    return Observable.create(observer => {
+      if (this.uploadedData.length > this.uploadConfigs.from + this.uploadedPhotos) {
+        observer.next(this.uploadedData);
+        observer.complete();
+        return;
+      }
+
+      let offset = this.uploadConfigs.from + this.uploadedPhotos;
+
+      if (this.pointerNextChunk) {
+        this.socService.getProvider(this.uploadSource.provider).getPhotos({
+          pointerNext: this.pointerNextChunk,
+          offset: offset
+        }).subscribe(result => {
+          this.pointerNextChunk = result.pointerNext;
+          observer.next(result.data);
+          observer.complete();
+        });
+        return;
+      }
+
+      this.socService.getProvider(this.uploadSource.provider).getPhotos({
+        source: this.uploadSource,
+        offset: offset
+      }).subscribe(result => {
+        this.pointerNextChunk = result.pointerNext;
+        observer.next(result.data);
+        observer.complete();
+      });
+
+    });
+  }
+
+  convertAndUploadPhotos(data) {
+
+    let photos = data.filter(photo => photo.index >= this.uploadConfigs.from + this.uploadedPhotos && photo.index <= this.uploadConfigs.to);
+    if (photos.length === 0) {
+      this.complete = true;
+      return;
     }
 
-    this.uploadPhotos(photos);
+    this.currentSubscription = this.uploadPhotos(photos).subscribe(result => result, console.error,
+      () => {
+        if (this.uploadedPhotos >= this.totalToUpload) {
+          this.complete = true;
+          return;
+        }
+        this.getPhotosToUpload().subscribe(result => {
+          if (!this.pause) {
+            this.convertAndUploadPhotos(result);
+          }
+        });
+      });
   }
 
   uploadPhotos(photos) {
-    Observable.from(photos).concatMap(photo => {
-      this.current = photo;
-      return this.provider.uploadPhoto(this.to, photo);
-    })
-      .subscribe(
-        result => {
-          this.uploadedPhotos++;
-          console.log(this.uploadedPhotos);
-          console.log(result);
-        },
-        console.warn,
-        () => {
-          if(this.uploadedPhotos >= (this.configs.to - this.configs.from)) {
-            this.disposeUploadTask();
-            return;
-          }
+    let uploadProvider = this.socService.getProvider(this.uploadDestination.provider);
+    let observable = Observable.from(photos).concatMap((photo: Photo) => {
+      this.uploadedPhotos++;
+      this.currentPhoto = photo;
+      let options = {
+        uploadDestination: this.uploadDestination,
+        photo: photo
+      };
+      return uploadProvider.uploadPhoto(options);
+    });
 
-          this.provider.http.get(this.nextChunk)
-            .map(response => response.json()).subscribe(result => this.convertAndLoadPhotos(result))
-
-        })
+    return observable;
   }
 
   registerUploadTask(uploadTasksArray) {
@@ -67,7 +114,15 @@ export class UploadTask {
     this.uploadTasksArray.push(this);
   }
 
+  pauseUpload() {
+    this.pause = true;
+    if (this.currentSubscription) {
+      this.currentSubscription.unsubscribe();
+    }
+  }
+
   disposeUploadTask() {
+    this.pauseUpload();
     let index = this.uploadTasksArray.indexOf(this);
     this.uploadTasksArray.splice(index, 1);
   }

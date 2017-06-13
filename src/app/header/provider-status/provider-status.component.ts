@@ -1,5 +1,7 @@
-import { ChangeDetectorRef, Component, DoCheck, Input, KeyValueChangeRecord, KeyValueDiffers, OnInit, ViewChild } from '@angular/core';
-import { SocialProviderService } from '../../core/social-provider/social-provider.service';
+import {
+  ChangeDetectorRef, Component, DoCheck, Input, KeyValueChangeRecord, KeyValueDiffers, OnChanges, OnInit,
+  ViewChild
+} from '@angular/core';
 import { Providers } from '../../core/social-provider/entities/providers.enum';
 import { ApiProvider } from '../../core/social-provider/entities/api-provider';
 import { ProviderStatuses } from '../../core/social-provider/entities/provider-statuses.enum';
@@ -16,6 +18,7 @@ export class ProviderStatusComponent implements OnInit, DoCheck {
   @ViewChild(MdMenuTrigger) trigger: MdMenuTrigger;
   @Input() provider: ApiProvider;
   providerStatuses = ProviderStatuses;
+  providerPrevStatus: ProviderStatuses;
   user: User;
   icons = {
     [Providers.FB]: 'facebook',
@@ -23,11 +26,8 @@ export class ProviderStatusComponent implements OnInit, DoCheck {
     [Providers.OK]: 'odnoklassniki',
     [Providers.INSTAGRAM]: 'instagram'
   };
-  differ;
 
-  constructor(private differs: KeyValueDiffers,
-              private ref: ChangeDetectorRef) {
-    this.differ = differs.find({}).create(null);
+  constructor() {
   }
 
   ngOnInit() {
@@ -35,13 +35,11 @@ export class ProviderStatusComponent implements OnInit, DoCheck {
 
 
   ngDoCheck() {
-    let changes = this.differ.diff(this.provider);
-    if (changes) {
-      changes.forEachChangedItem((change: KeyValueChangeRecord<string, number>) => {
-        if (change.key === 'status' && change.currentValue === this.providerStatuses.CONNECTED) {
-          this.getUserInfo();
-        }
-      });
+    if (this.providerPrevStatus !== this.provider.status) {
+      this.providerPrevStatus = this.provider.status;
+      if(this.provider.status === this.providerStatuses.CONNECTED) {
+        this.getUserInfo();
+      }
     }
   }
 

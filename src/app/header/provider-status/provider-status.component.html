@@ -1,7 +1,7 @@
 <button class="status-button" md-button (click)="onButtonClick()">
   <div class="button-content">
-    <img class="avatar" src="{{user?.photoUrl}}"
-         *ngIf="provider.status === providerStatuses.CONNECTED && user"/>
+    <img class="avatar" [src]="user?.photoUrl || './assets/avatar-placeholder.png'"
+         *ngIf="provider.status === providerStatuses.CONNECTED"/>
     <md-icon [svgIcon]="icons[provider.type]"
              *ngIf="provider.status !== providerStatuses.CONNECTED"></md-icon>
     <div class="status-indicator">

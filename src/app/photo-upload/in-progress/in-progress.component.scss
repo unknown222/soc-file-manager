@@ -1,7 +1,68 @@
 :host {
-  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.example-card {
-  max-width: 250px;
+$card-width: 250px;
+$card-height: 346px;
+
+.upload-task-card {
+  width: $card-width;
+  height: $card-height;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  md-card-title, md-card-subtitle {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: $card-width;
+    white-space: nowrap;
+  }
+
+  img {
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 0;
+  }
+
+  .progress-bar-container {
+    position: relative;
+    height: 0;
+    md-progress-bar {
+      position: absolute;
+      margin: 0 -24px 12px -24px;
+      width: calc(100% + 48px);
+    }
+  }
+
+
+  md-card-content {
+    padding-top: 14px;
+    flex: 1 1 0;
+    overflow: hidden;
+
+    .no-description {
+      opacity: 0.54;
+    }
+  }
+
+  md-card-actions {
+    display: flex;
+    .spacer {
+      flex: 1;
+    }
+    .count {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  md-card-header {
+
+
+  }
 }

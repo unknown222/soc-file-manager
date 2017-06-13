@@ -21,7 +21,12 @@ export class CreateUploadComponent implements OnInit {
     photoUrl: 'https://pp.userapi.com/c836536/v836536084/4600d/mAl_ZIEzsw0.jpg'
   };
   loadedViewPhotos: Array<Photo> = [];
-  uploadConfigs: any;
+
+  uploadConfigs: any = {
+    from: 20,
+    to: 30,
+    isValid: true
+  };
 
   constructor(private sideNavPortal: SidenavPortalService,
               private injector: Injector,
@@ -31,8 +36,14 @@ export class CreateUploadComponent implements OnInit {
   ngOnInit() {
   }
 
-  start(params) {
-    this.worker.start(params);
+  start() {
+    let options = {
+      uploadSource: this.uploadSource,
+      uploadDestination: this.uploadDestination,
+      uploadedData: this.loadedViewPhotos,
+      uploadConfigs: this.uploadConfigs
+    };
+    this.worker.start(options);
   }
 
   browseSource() {

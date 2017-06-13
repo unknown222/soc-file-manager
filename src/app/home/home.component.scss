@@ -1,5 +1,41 @@
+@import "../../resources/theme";
+
 :host {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+$card-size: 250px;
+
+.navigation-button {
+  max-width: $card-size + 48;
+  max-height: $card-size + 48;
+  padding: 0;
+  margin: 15px;
+
+  md-card {
+    width: $card-size;
+    height: $card-size;
+    margin: 0;
+
+    md-card-title, p {
+      white-space: normal;
+      text-align: start;
+      line-height: 16px;
+    }
+
+    md-icon {
+      color: mat-color($primary);
+      height: 200px;
+      width: 200px;
+      font-size: 200px;
+      object-fit: cover;
+      margin-bottom: 0;
+    }
+  }
 }

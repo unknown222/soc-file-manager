@@ -1,0 +1,15 @@
+<form #uploadRange="ngForm">
+  <md-input-container>
+    <input mdInput type="number" required
+           name="from" placeholder="Upload from"
+           min="1" max="{{localForm.to}}"
+           [(ngModel)]="localForm.from" #from="ngModel">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput type="number" required
+           name="to" placeholder="Upload to"
+           min="{{localForm.from}}"
+           [(ngModel)]="localForm.to" #to="ngModel">
+    <md-hint align="end"></md-hint>
+  </md-input-container>
+</form>

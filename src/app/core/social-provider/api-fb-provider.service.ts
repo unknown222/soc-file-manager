@@ -1,6 +1,7 @@
 /**
  * Created by Unknown on 6/2/2017.
  */
+declare const FB;
 import { Injectable } from '@angular/core';
 import { FacebookService, LoginResponse } from 'ngx-facebook';
 import { ApiProvider } from './entities/api-provider';
@@ -8,8 +9,6 @@ import { Http } from '@angular/http';
 import { environment } from '../../../environments/environment';
 import { Providers } from './entities/providers.enum';
 import { ProviderStatuses } from './entities/provider-statuses.enum';
-
-import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
 import { Observable } from 'rxjs/Observable';
 import { AsyncSubject } from 'rxjs/AsyncSubject';
 import 'rxjs/add/observable/fromPromise';
@@ -29,9 +28,8 @@ export class ApiFbProviderService implements ApiProvider {
   type = Providers.FB;
   status = ProviderStatuses.UNDEFINED;
   initRequest = new AsyncSubject();
-  http: Http;
 
-  constructor(private fb: FacebookService, http: Http) {
+  constructor(private fb: FacebookService, private http: Http) {
     this.http = http;
     this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest);
   }
@@ -124,7 +122,7 @@ export class ApiFbProviderService implements ApiProvider {
     const handlePhotos = (response) => {
       let photos: Array<Photo> = [];
       for (let photo of response.data) {
-        photos.push(new Photo(photo.images[ 0 ].source, photo.images[ photo.images.length - 1 ].source, photo.name))
+        photos.push(new Photo(photos.length + options.offset, photo.images[ 0 ].source, photo.images[ photo.images.length - 1 ].source, photo.name))
       }
 
       let result: any = { data: photos, pointerNext: response.paging.next };
@@ -135,7 +133,10 @@ export class ApiFbProviderService implements ApiProvider {
     };
 
     if (options.source) {
-      request = Observable.defer(() => Observable.fromPromise(this.fb.api(options.source.id + '/photos', 'get', { offset: options.offset || 0, fields: 'images,picture,name' }).then(handlePhotos)));
+      request = Observable.defer(() => Observable.fromPromise(this.fb.api(options.source.id + '/photos', 'get', {
+        offset: options.offset || 0,
+        fields: 'images,picture,name'
+      }).then(handlePhotos)));
     }
 
     if (options.pointerNext) {
@@ -147,40 +148,16 @@ export class ApiFbProviderService implements ApiProvider {
     return this.initRequest.mergeMap(() => request);
   }
 
-  createAlbum(pageId: string, params: any): Observable<any> {
-    let promise = this.fb.api(pageId + '/albums', 'post', params).then(response => {
-      return response;
-    }).catch(e => {
-      console.log(e);
-    });
-    return PromiseObservable.create(promise);
-  }
-
-  uploadPhotos(albumId: string, photos: any): Observable<any> {
-    let batchRequests = [];
-    for (let photo of photos) {
-      let request = {
-        method: 'POST',
-        relative_url: albumId + '/photos',
-        body: '&url=' + encodeURIComponent(photo.url)
-      };
-      batchRequests.push(request);
-    }
-
-    let promise = this.fb.api('', 'post', { batch: batchRequests }).then(response => {
-      console.log(response);
-      return response;
-    }).catch(e => {
-      console.log(e);
-    });
-    return PromiseObservable.create(promise);
-  }
-
-  uploadPhoto(albumId: string, photo: any): Observable<any> {
-    let promise = this.fb.api(albumId + '/photos', 'post', photo).then(response => {
-      return response
-    }).catch(console.error);
-    return PromiseObservable.create(promise);
+  uploadPhoto(options): Observable<any> {
+    let request = Observable.defer(() => Observable.fromPromise(
+      this.fb.api(options.uploadDestination.id + '/photos', 'post', {
+        url: options.photo.photoUrl,
+        caption: options.photo.description
+      }).then(response => {
+        return response
+      }).catch(console.error)
+    ));
+    return this.initRequest.mergeMap(() => request);
   }
 
   cleanupCookies() {

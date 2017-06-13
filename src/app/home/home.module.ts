@@ -4,18 +4,18 @@ import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { FormsModule } from '@angular/forms';
-import { MdButtonModule } from '@angular/material';
-import { TestComponent } from './test/test.component';
+import { MdButtonModule, MdCardModule, MdIconModule } from '@angular/material';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-        HomeRoutingModule,
-    MdButtonModule
+    HomeRoutingModule,
+    MdButtonModule,
+    MdCardModule,
+    MdIconModule
   ],
-  declarations: [ HomeComponent, TestComponent ],
-  entryComponents: [ TestComponent ],
+  declarations: [ HomeComponent ],
   providers: []
 })
 export class HomeModule {

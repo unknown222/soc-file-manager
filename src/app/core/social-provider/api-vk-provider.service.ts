@@ -1,8 +1,4 @@
 import { ApiProvider } from './entities/api-provider';
-/**
- * Created by Unknown on 6/2/2017.
- */
-declare const VK;
 import { Injectable, NgZone } from '@angular/core';
 import { Http } from '@angular/http';
 import { Providers } from './entities/providers.enum';
@@ -18,6 +14,10 @@ import { PageWithLoadingPermissions } from './entities/page-with-loading-permiss
 import { ProviderNames } from './entities/provider-names';
 import { Album } from './entities/album';
 import { Photo } from './entities/photo';
+/**
+ * Created by Unknown on 6/2/2017.
+ */
+declare const VK;
 
 @Injectable()
 export class ApiVkProviderService implements ApiProvider {
@@ -26,9 +26,7 @@ export class ApiVkProviderService implements ApiProvider {
   status = ProviderStatuses.UNDEFINED;
   initRequest = new AsyncSubject();
 
-  http: Http;
-
-  constructor(http: Http, private zone: NgZone) {
+  constructor(private http: Http, private zone: NgZone) {
     this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest);
   }
 
@@ -72,8 +70,11 @@ export class ApiVkProviderService implements ApiProvider {
         if (response.status === 'connected') {
           this.status = ProviderStatuses.CONNECTED;
         }
-        observer.next(response);
-        observer.complete();
+        this.zone.run(() => {
+          observer.next(response);
+          observer.complete();
+        });
+
       }, environment.vkAppConfig.loginOptions);
     });
   }
@@ -82,8 +83,10 @@ export class ApiVkProviderService implements ApiProvider {
     return Observable.create(observer => {
       VK.Auth.logout(response => {
         this.status = ProviderStatuses.INIT;
-        observer.next(response);
-        observer.complete();
+        this.zone.run(() => {
+          observer.next(response);
+          observer.complete();
+        });
       });
     });
   }
@@ -117,12 +120,11 @@ export class ApiVkProviderService implements ApiProvider {
               pagesWithLoadingPermissions.push(new PageWithLoadingPermissions(group.gid, this.type, group.name, group.photo, group.description));
             }
           }
+          this.zone.run(() => {
+            observer.next(pagesWithLoadingPermissions);
+          });
         }
-
-        this.zone.run(() => {
-          observer.next(pagesWithLoadingPermissions);
-          observer.complete();
-        });
+        observer.complete();
       });
     });
     return this.initRequest.mergeMap(() => request);
@@ -139,31 +141,30 @@ export class ApiVkProviderService implements ApiProvider {
           for (let album of response.response) {
             albums.push(new Album(album.aid, pageId, this.type, album.title, album.thumb_src, album.description));
           }
+          this.zone.run(() => {
+            observer.next(albums);
+          });
         }
-
-        this.zone.run(() => {
-          observer.next(albums);
-          observer.complete();
-        });
+        observer.complete();
       });
     });
     return this.initRequest.mergeMap(() => request);
   }
 
   getPhotos(options: any): Observable<any> {
-
-    console.log(options);
-
     const handlePhotos = (response) => {
       let photos: Array<Photo> = [];
       for (let photo of response) {
-        photos.push(new Photo(photo.src_xxxbig, photo.src_big, photo.text))
+        let photoUrl = photo.src_xxxbig || photo.src_xxbig || photo.src_xbig || photo.src_big || photo.src || photo.src_small;
+        let thumbUrl = photo.src_big || photo.src || photo.src_small;
+        photos.push(new Photo(photos.length + options.offset, photoUrl, thumbUrl, photo.text))
       }
 
       let result: any = { data: photos };
       if (photos.length < 1) {
         result.complete = true;
       }
+
       return result;
     };
 
@@ -180,13 +181,10 @@ export class ApiVkProviderService implements ApiProvider {
       if (!requestOptions.owner_id) delete requestOptions[ 'owner_id' ];
 
       VK.Api.call('photos.get', requestOptions, response => {
-        console.log(response);
         if (response.response) {
-          this.zone.run(() => {
-            observer.next(handlePhotos(response.response));
-            observer.complete();
-          });
+          observer.next(handlePhotos(response.response));
         }
+        observer.complete();
       });
     });
 
@@ -194,16 +192,58 @@ export class ApiVkProviderService implements ApiProvider {
     return this.initRequest.mergeMap(() => request);
   }
 
-  createAlbum(pageId: string, params: any): Observable<any> {
-    return undefined;
-  }
+  uploadPhoto(options): Observable<any> {
+    let request = Observable.create(observer => {
 
-  uploadPhotos(albumId: string, params): Observable<any> {
-    return undefined;
-  }
+      let uploadUrl;
 
-  uploadPhoto(albumId: string, photo: any): Observable<any> {
-    return undefined;
+      let getUploadServerOptions = {
+        album_id: options.destination.id,
+        group_id: options.destination.owner
+      };
+      if (!getUploadServerOptions.group_id) delete getUploadServerOptions[ 'group_id' ];
+
+      const uploadToServer = (blob) => {
+        console.log(uploadUrl);
+        console.log(blob);
+
+        let formData = new FormData();
+        formData.append('photo', blob);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadUrl, true);
+        xhr.onload = xhr.onerror = function () {
+          console.log(xhr.responseText)
+          // тут будет ответ от ВК, который надо использовать в сохранении фото в альбом или на стену
+        };
+        xhr.send(formData);
+
+        observer.next(null);
+        observer.complete();
+      };
+
+
+      const uploadPhoto = () => {
+        let canvas = document.createElement('canvas');
+        let image = new Image();
+        image.crossOrigin = 'Anonymous';
+        image.src = options.photo.photoUrl;
+        image.onload = (event) => {
+          canvas.getContext('2d').drawImage(image, 0, 0);
+          canvas.toBlob(uploadToServer, 'image/jpeg', 0.85);
+        };
+      };
+
+
+      VK.Api.call('photos.getUploadServer', getUploadServerOptions, response => {
+        if (response.response) {
+          console.log(response.response);
+          uploadUrl = response.response.upload_url;
+          uploadPhoto();
+        }
+      });
+    });
+    return this.initRequest.mergeMap(() => request);
   }
 
 }

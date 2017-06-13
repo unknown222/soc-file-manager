@@ -12,9 +12,8 @@ export class WorkerService {
   constructor(private socService: SocialProviderService) {
   }
 
-  start(params) {
-    let provider: ApiProvider = this.socService.getProvider(Providers.FB);
-    let task: UploadTask = new UploadTask(params.from, params.to, params.photos, provider);
+  start(options) {
+    let task: UploadTask = new UploadTask(options, this.socService);
     task.registerUploadTask(this.activeTasks);
     task.executeUploadTask();
   }
