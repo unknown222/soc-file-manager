@@ -1,4 +1,4 @@
-<od-virtualscroll [vsData]="scrollObserver" [vsOptions]="options"
+<od-virtualscroll [vsData]="scrollObserver" [vsOptions]="options" [vsResize]="resize$"
                   [vsScrollTop]="scrollTop$" *ngIf="scrollObserver">
   <ng-template let-item let-row="row" let-column="column">
     <div class="image-wrp">

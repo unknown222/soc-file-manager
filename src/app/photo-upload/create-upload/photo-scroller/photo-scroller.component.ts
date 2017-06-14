@@ -28,6 +28,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
 
   private _scrollEnd$ = this._scrollObs.scrollWin$.filter(([ scrollWin ]) => scrollWin.visibleEndRow !== -1 && scrollWin.visibleEndRow === scrollWin.numVirtualRows - 1);
   scrollTop$: Subject<SetScrollTopCmd> = new Subject();
+  resize$: Subject<any> = new Subject();
 
   constructor(private chRef: ChangeDetectorRef,
               private socService: SocialProviderService,
@@ -111,6 +112,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
 
   fixVirtualScrollTopValue() {
     this.scrollTop$.next(new SetScrollTopCmd(this.currentScrollTop));
+    this.resize$.next(null);
   }
 
 }
