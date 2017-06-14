@@ -182,7 +182,9 @@ export class ApiVkProviderService implements ApiProvider {
 
       VK.Api.call('photos.get', requestOptions, response => {
         if (response.response) {
-          observer.next(handlePhotos(response.response));
+          this.zone.run(() => {
+            observer.next(handlePhotos(response.response));
+          });
         }
         observer.complete();
       });

@@ -30,7 +30,6 @@ export class ApiFbProviderService implements ApiProvider {
   initRequest = new AsyncSubject();
 
   constructor(private fb: FacebookService, private http: Http) {
-    this.http = http;
     this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest);
   }
 
@@ -125,7 +124,12 @@ export class ApiFbProviderService implements ApiProvider {
         photos.push(new Photo(photos.length + options.offset, photo.images[ 0 ].source, photo.images[ photo.images.length - 1 ].source, photo.name))
       }
 
-      let result: any = { data: photos, pointerNext: response.paging.next };
+      let result: any = { data: photos };
+
+      if(response.paging) {
+        response.pointerNext =  response.paging.next;
+      }
+
       if (!result.pointerNext) {
         result.complete = true;
       }

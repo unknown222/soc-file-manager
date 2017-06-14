@@ -17,4 +17,8 @@ export class WorkerService {
     task.registerUploadTask(this.activeTasks);
     task.executeUploadTask();
   }
+
+  getActiveTasks() {
+    return this.activeTasks.filter(task => task.complete !== true);
+  }
 }

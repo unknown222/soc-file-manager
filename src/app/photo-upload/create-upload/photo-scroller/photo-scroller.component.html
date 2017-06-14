@@ -1,7 +1,25 @@
-<od-virtualscroll [vsData]="scrollObserver" [vsOptions]="options" *ngIf="scrollObserver">
+<od-virtualscroll [vsData]="scrollObserver" [vsOptions]="options"
+                  [vsScrollTop]="scrollTop$" *ngIf="scrollObserver">
   <ng-template let-item let-row="row" let-column="column">
     <div class="image-wrp">
       <img [hidden]="!item._loaded" [src]="item.thumbUrl" (load)="item._loaded = true"/>
     </div>
   </ng-template>
 </od-virtualscroll>
+
+<div class="message" *ngIf="!photoSource && !initLoading">
+  <md-icon>photo</md-icon>
+  <span class="message-text">Select source of yours photos</span>
+</div>
+<div class="message" *ngIf="initLoading">
+  <div class="sk-folding-cube">
+    <div class="sk-cube1 sk-cube"></div>
+    <div class="sk-cube2 sk-cube"></div>
+    <div class="sk-cube4 sk-cube"></div>
+    <div class="sk-cube3 sk-cube"></div>
+  </div>
+</div>
+<div class="message" *ngIf="photoSource && data.length < 1 && !initLoading">
+  <md-icon>not_interested</md-icon>
+  <span class="message-text">Couldn't find photos in this album</span>
+</div>

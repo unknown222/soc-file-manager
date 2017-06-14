@@ -22,11 +22,16 @@ export class UploadTask {
   currentSubscription: Subscription;
 
   constructor(options, private socService: SocialProviderService) {
-    this.uploadSource = options.uploadSource;
-    this.uploadDestination = options.uploadDestination;
-    this.uploadedData = options.uploadedData;
-    this.uploadConfigs = options.uploadConfigs;
+    this.uploadSource = Object.assign({}, options.uploadSource);
+    this.uploadDestination = Object.assign({}, options.uploadDestination);
+    this.uploadConfigs = Object.assign({}, options.uploadConfigs);
     this.totalToUpload = this.uploadConfigs.to - this.uploadConfigs.from + 1;
+
+    this.uploadedData = [];
+    for (let photo of options.uploadedData) {
+      this.uploadedData.push(Object.assign({}, photo));
+    }
+
   }
 
   executeUploadTask() {
@@ -76,14 +81,14 @@ export class UploadTask {
 
     let photos = data.filter(photo => photo.index >= this.uploadConfigs.from + this.uploadedPhotos && photo.index <= this.uploadConfigs.to);
     if (photos.length === 0) {
-      this.complete = true;
+      this.completeUpload();
       return;
     }
 
     this.currentSubscription = this.uploadPhotos(photos).subscribe(result => result, console.error,
       () => {
         if (this.uploadedPhotos >= this.totalToUpload) {
-          this.complete = true;
+          this.completeUpload();
           return;
         }
         this.getPhotosToUpload().subscribe(result => {
@@ -112,6 +117,11 @@ export class UploadTask {
   registerUploadTask(uploadTasksArray) {
     this.uploadTasksArray = uploadTasksArray;
     this.uploadTasksArray.push(this);
+  }
+
+  completeUpload() {
+    this.complete = true;
+    this.pauseUpload();
   }
 
   pauseUpload() {

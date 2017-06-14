@@ -1,8 +1,8 @@
-<md-tab-group class="photo-upload-content" (selectChange)="onTabChange()">
+<md-tab-group class="photo-upload-content" (selectChange)="onTabChange($event)">
   <md-tab label="Create upload">
     <app-create-upload></app-create-upload>
   </md-tab>
-  <md-tab label="In-progress">
+  <md-tab label="{{'In-progress (' + worker.getActiveTasks().length + ')'}}">
     <app-in-progress></app-in-progress>
   </md-tab>
 </md-tab-group>

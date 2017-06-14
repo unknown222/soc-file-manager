@@ -6,6 +6,8 @@ import { Node } from './node';
 import { IActionMapping, TreeNode } from 'angular-tree-component';
 import 'rxjs/add/operator/toPromise';
 import { MdSidenav } from '@angular/material';
+import { Providers } from '../../../core/social-provider/entities/providers.enum';
+import { ProviderStatuses } from '../../../core/social-provider/entities/provider-statuses.enum';
 
 @Component({
   selector: 'app-photo-storages-browser',
@@ -16,6 +18,7 @@ export class PhotoStorageBrowserComponent implements OnInit {
 
   @Input() resolve: Function;
   @Input() sidenav: MdSidenav;
+  @Input() action: string;
 
   nodes: Array<Node> = [];
 
@@ -47,7 +50,12 @@ export class PhotoStorageBrowserComponent implements OnInit {
 
   ngOnInit() {
     for (let provider of  this.socProvider.getProviders()) {
-      this.nodes.push(new Node(NodeType.PROVIDER, provider.name, provider));
+
+      if (provider.status === ProviderStatuses.CONNECTED) {
+        if (provider.type !== Providers.VK || this.action === 'source') {
+          this.nodes.push(new Node(NodeType.PROVIDER, provider.name, provider));
+        }
+      }
     }
   }
 

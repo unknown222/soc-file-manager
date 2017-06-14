@@ -1,10 +1,76 @@
 :host {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex: 1;
   max-width: 100vw;
 }
 
-.controls {
-  padding: 10px;
+md-card.controls {
+  margin: 12px;
+  max-width: 250px;
+  min-width: 250px;
+  align-self: flex-start;
+
+  md-card-content {
+    width: calc(100% + 48px);
+    margin: 0 -24px 12px -24px;
+  }
+
+  .settings {
+    padding: 12px 24px;
+  }
+
+  .controls-button {
+    width: 100%;
+    max-height: 48px;
+
+
+    .button-content {
+      min-width: 100%;
+      display: flex;
+      .button-icon {
+        font-size: 32px;
+        line-height: 32px;
+        height: 32px;
+        width: 32px;
+        padding: 8px;
+      }
+      .button-text {
+        padding: 8px;
+        flex: 1;
+        text-align: start;
+        .button-line {
+          line-height: 16px;
+        }
+
+        .button-sub-line {
+          max-width: 200px;
+          opacity: 0.57;
+          line-height: 16px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+  }
+
+  md-card-actions {
+    md-icon {
+      margin-right: 12px;
+    }
+  }
 }
+
+md-card.scroller {
+  margin: 12px;
+  flex: 1 1 0;
+  display: flex;
+  min-width: 250px;
+  min-height: 250px;
+
+  app-photo-scroller {
+    flex: 1;
+  }
+}
+

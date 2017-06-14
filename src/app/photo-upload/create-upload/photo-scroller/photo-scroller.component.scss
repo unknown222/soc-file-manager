@@ -1,3 +1,4 @@
+@import "../../../../resources/theme";
 $photoSize: 250px;
 
 :host {
@@ -5,6 +6,7 @@ $photoSize: 250px;
   display: flex;
   flex-direction: column;
   min-height: $photoSize;
+  min-width: $photoSize;
 }
 
 od-virtualscroll {
@@ -30,4 +32,22 @@ od-virtualscroll {
 
 /deep/ .od-scroll-container {
   margin: 0 auto;
+}
+
+div.message {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+md-icon {
+  color: mat-color($primary);
+  height: 200px;
+  width: 200px;
+  font-size: 200px;
+  object-fit: cover;
+  margin-bottom: 0;
 }

@@ -1,9 +1,11 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { WorkerService } from '../../core/worker/worker.service';
 import { PhotoStorageBrowserComponent } from './photo-storage-browser/photo-storage-browser.component';
 import { SidenavPortalService } from '../../ui/sidenav-portal/sidenav-portal.service';
 import { Album } from '../../core/social-provider/entities/album';
 import { Photo } from '../../core/social-provider/entities/photo';
+import { MdSnackBar } from '@angular/material';
+import { PhotoScrollerComponent } from './photo-scroller/photo-scroller.component';
 
 @Component({
   selector: 'app-create-upload',
@@ -12,25 +14,21 @@ import { Photo } from '../../core/social-provider/entities/photo';
 })
 export class CreateUploadComponent implements OnInit {
 
-  uploadDestination: Album = { id: '427189630995683', owner: '422111521503494', provider: 0, name: '9 June 2017', photoUrl: undefined };
-  uploadSource: Album = {
-    id: 244894685,
-    owner: 115923485,
-    provider: 1,
-    name: 'testAlbumForGroup',
-    photoUrl: 'https://pp.userapi.com/c836536/v836536084/4600d/mAl_ZIEzsw0.jpg'
-  };
+  @ViewChild(PhotoScrollerComponent) photoScrollerComponent: PhotoScrollerComponent;
+  uploadDestination: Album;
+  uploadSource: Album;
   loadedViewPhotos: Array<Photo> = [];
 
   uploadConfigs: any = {
-    from: 20,
-    to: 30,
+    from: 0,
+    to: 14,
     isValid: true
   };
 
   constructor(private sideNavPortal: SidenavPortalService,
               private injector: Injector,
-              private worker: WorkerService) {
+              private worker: WorkerService,
+              public snackBar: MdSnackBar) {
   }
 
   ngOnInit() {
@@ -43,12 +41,19 @@ export class CreateUploadComponent implements OnInit {
       uploadedData: this.loadedViewPhotos,
       uploadConfigs: this.uploadConfigs
     };
+    let message = `Upload from ${options.uploadSource.name} to ${options.uploadDestination.name} has been started`;
     this.worker.start(options);
+    this.snackBar.open(message, null, {
+      duration: 1000
+    });
   }
 
   browseSource() {
     this.sideNavPortal.openSidenavWithComponent(this.injector, PhotoStorageBrowserComponent, {
       align: 'start',
+      componentProperties: {
+        action: 'source'
+      },
       resolve: (response) => {
         this.uploadSource = response;
         this.loadedViewPhotos = [];
@@ -59,10 +64,17 @@ export class CreateUploadComponent implements OnInit {
   browseDestination() {
     this.sideNavPortal.openSidenavWithComponent(this.injector, PhotoStorageBrowserComponent, {
       align: 'end',
+      componentProperties: {
+        action: 'destination'
+      },
       resolve: (response) => {
         this.uploadDestination = response;
       }
     });
+  }
+
+  fixVirtualScrollerTop() {
+    this.photoScrollerComponent.fixVirtualScrollTopValue();
   }
 
 }

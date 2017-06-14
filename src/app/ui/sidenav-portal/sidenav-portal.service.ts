@@ -39,6 +39,9 @@ export class SidenavPortalService {
           timeout = 150;
           this.sidenav.align = options.align;
         }
+        if (options.componentProperties) {
+          Object.assign(componentRef.instance, options.componentProperties);
+        }
         if (options.resolve) {
           componentRef.instance[ 'resolve' ] = options.resolve;
         }

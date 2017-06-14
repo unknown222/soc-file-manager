@@ -1,22 +1,51 @@
-<div class="controls">
-  <div>
-    <button md-raised-button (click)="browseSource()">Source</button>
-    {{uploadSource| json}}
-  </div>
+<md-card class="controls">
+  <md-card-content>
+    <button md-button class="controls-button" (click)="browseSource()">
+      <div class="button-content">
+        <md-icon class="button-icon">navigate_before</md-icon>
+        <div class="button-text">
+          <div class="button-line">
+            From:
+          </div>
+          <div class="button-sub-line" *ngIf="!uploadSource">
+            Source of yours photos
+          </div>
+          <div class="button-sub-line" *ngIf="uploadSource">
+            {{uploadSource.name}}
+          </div>
+        </div>
+      </div>
+    </button>
+    <button md-button class="controls-button" (click)="browseDestination()">
+      <div class="button-content">
+        <md-icon class="button-icon">navigate_next</md-icon>
+        <div class="button-text">
+          <div class="button-line">
+            To:
+          </div>
+          <div class="button-sub-line" *ngIf="!uploadDestination">
+            Where to upload yours photos
+          </div>
+          <div class="button-sub-line" *ngIf="uploadDestination">
+            {{uploadDestination.name}}
+          </div>
+        </div>
+      </div>
+    </button>
+    <div class="settings">
+      <app-photo-upload-configs [configs]="uploadConfigs"></app-photo-upload-configs>
+    </div>
+  </md-card-content>
 
-  <div>
-    <button md-raised-button (click)="browseDestination()">Destination</button>
-    {{uploadDestination| json}}
-  </div>
+  <md-card-actions>
+    <button md-button (click)="start()"
+            [disabled]="!uploadConfigs.valid || !uploadSource || !uploadDestination || !loadedViewPhotos || loadedViewPhotos.length < 1">
+      <md-icon>file_upload</md-icon>
+      START UPLOAD
+    </button>
+  </md-card-actions>
+</md-card>
 
-  <div>
-    <app-photo-upload-configs [configs]="uploadConfigs"></app-photo-upload-configs>
-  </div>
-  <div>
-    <button md-raised-button (click)="start()" [disabled]="!uploadConfigs.valid">start</button>
-  </div>
-</div>
-
-
-
-<app-photo-scroller [data]="loadedViewPhotos" [photoSource]="uploadSource"></app-photo-scroller>
+<md-card class="scroller">
+  <app-photo-scroller [data]="loadedViewPhotos" [photoSource]="uploadSource"></app-photo-scroller>
+</md-card>

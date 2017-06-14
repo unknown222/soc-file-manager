@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ConnectableObservable } from 'rxjs/Rx';
 import { Observer } from 'rxjs/Observer';
 import { Subscription } from 'rxjs/Subscription';
-import { ScrollObservableService, SetScrollTopCmd } from 'od-virtualscroll';
+import { IVirtualScrollWindow, ScrollObservableService, SetScrollTopCmd } from 'od-virtualscroll';
 import { SocialProviderService } from '../../../core/social-provider/social-provider.service';
 import { ApiProvider } from '../../../core/social-provider/entities/api-provider';
 import { Subject } from 'rxjs/Subject';
@@ -20,11 +20,14 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
   provider: ApiProvider;
   pointerNext: string;
   complete: boolean;
+  currentScrollTop;
+  initLoading: boolean;
 
   scrollObserver: ConnectableObservable<any[]>;
   options = Observable.of({ itemWidth: 250, itemHeight: 250, numAdditionalRows: 1 });
 
   private _scrollEnd$ = this._scrollObs.scrollWin$.filter(([ scrollWin ]) => scrollWin.visibleEndRow !== -1 && scrollWin.visibleEndRow === scrollWin.numVirtualRows - 1);
+  scrollTop$: Subject<SetScrollTopCmd> = new Subject();
 
   constructor(private chRef: ChangeDetectorRef,
               private socService: SocialProviderService,
@@ -37,6 +40,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.photoSource.currentValue !== changes.photoSource.previousValue) {
+      this.scrollObserver = undefined;
       this.init();
     }
   }
@@ -73,6 +77,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
           }
         }));
 
+        this.scrollTop$.next(new SetScrollTopCmd(0));
         observer.next(this.data);
 
         return function unsubscribe() {
@@ -82,18 +87,30 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
     };
 
     if (this.photoSource) {
-      this.scrollObserver = undefined;
-      this.chRef.detectChanges();
-      initObserver();
+
       this.provider = this.socService.getProvider(this.photoSource.provider);
+      this.initLoading = true;
       this.provider.getPhotos({ source: this.photoSource, offset: 0 }).subscribe(result => {
         Array.prototype.push.apply(this.data, result.data);
         this.pointerNext = result.pointerNext;
         this.complete = result.complete;
-        this.scrollObserver.connect();
-      })
+        this.initLoading = false;
+        if (this.data.length > 0) {
+          initObserver();
+          this.chRef.detectChanges();
+          this.scrollObserver.connect();
+        }
+      });
+
+      this._scrollObs.scrollWin$.subscribe((scrollWin: Array<IVirtualScrollWindow>) => {
+        this.currentScrollTop = scrollWin[ 0 ].scrollTop;
+      });
 
     }
+  }
+
+  fixVirtualScrollTopValue() {
+    this.scrollTop$.next(new SetScrollTopCmd(this.currentScrollTop));
   }
 
 }
