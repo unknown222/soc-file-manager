@@ -9,14 +9,26 @@ export const environment: Environment = {
   production: false,
   fbAppConfig: {
     initParams: {
-      appId: 'xxxxxxxxxxxx',
+      appId: 'XXXXXXXXXXXX',
       xfbml: true,
       version: 'v2.9'
     },
     loginOptions: {
-      scope: 'public_profile,user_photos,pages_show_list,publish_actions,user_managed_groups',
+      scope: 'public_profile,user_photos,publish_actions,user_managed_groups',
       return_scopes: true,
       enable_profile_selector: true
     }
+  },
+
+  vkAppConfig: {
+    initParams: {
+      apiId: 999999999999,
+      status: false,
+      onlyWidgets: false
+    },
+    loginOptions: 4+262144
+  },
+  gitConfig: {
+    gitProjectUrl: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
   }
 };
