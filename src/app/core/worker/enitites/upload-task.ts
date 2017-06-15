@@ -10,7 +10,7 @@ export class UploadTask {
   uploadSource: Album;
   uploadDestination: Album;
   uploadedData: Array<Photo>;
-  uploadConfigs: { from, to };
+  uploadConfigs: { from, to, copyDescription };
   uploadTasksArray;
 
   totalToUpload: number;
@@ -108,6 +108,9 @@ export class UploadTask {
         uploadDestination: this.uploadDestination,
         photo: photo
       };
+      if (!this.uploadConfigs.copyDescription) {
+        photo.description = null;
+      }
       return uploadProvider.uploadPhoto(options);
     });
 

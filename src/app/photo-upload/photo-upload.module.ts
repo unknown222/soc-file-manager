@@ -13,7 +13,8 @@ import {
   MdListModule,
   MdProgressBarModule,
   MdSnackBarModule,
-  MdTabsModule
+  MdTabsModule,
+  MdCheckboxModule
 } from '@angular/material';
 import { CreateUploadComponent } from './create-upload/create-upload.component';
 import { InProgressComponent } from './in-progress/in-progress.component';
@@ -38,7 +39,8 @@ import { PhotoUploadConfigsComponent } from './create-upload/photo-upload-config
     MdButtonModule,
     MdTabsModule,
     MdProgressBarModule,
-    MdSnackBarModule
+    MdSnackBarModule,
+    MdCheckboxModule
   ],
   declarations: [ PhotoUploadComponent, CreateUploadComponent, InProgressComponent, PhotoStorageBrowserComponent, PhotoScrollerComponent, PhotoUploadConfigsComponent ],
   entryComponents: [ PhotoStorageBrowserComponent ],

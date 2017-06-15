@@ -22,6 +22,7 @@ export class CreateUploadComponent implements OnInit {
   uploadConfigs: any = {
     from: 0,
     to: 14,
+    copyDescription: true,
     isValid: true
   };
 
