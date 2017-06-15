@@ -10,6 +10,7 @@ $photoSize: 250px;
 }
 
 od-virtualscroll {
+  flex: 1 1 0;
   min-height: $photoSize;
   min-width: $photoSize;
   overflow-x: hidden;
