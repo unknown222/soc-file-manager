@@ -1,12 +1,14 @@
 :host {
-  flex: 1;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
+  min-width: 320px;
+  min-height: 0;
 }
 
 
 md-tab-group {
-  flex: 1;
+  flex: 1 1 0;
 }
 
 
@@ -18,6 +20,5 @@ md-tab-group {
   }
   .mat-tab-body-content {
     display: flex;
-    overflow-x: hidden;
   }
 }
