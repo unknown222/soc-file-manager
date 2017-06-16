@@ -5,6 +5,7 @@ import { HelpRoutingModule } from './help-routing.module';
 import { HelpComponent } from './help.component';
 import { MdCardModule, MdIconModule, MdListModule, MdSidenavModule } from '@angular/material';
 import { UploadPhotosGuideComponent } from './upload-photos-guide/upload-photos-guide.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { UploadPhotosGuideComponent } from './upload-photos-guide/upload-photos-
     MdIconModule,
     MdCardModule
   ],
-  declarations: [HelpComponent, UploadPhotosGuideComponent]
+  declarations: [HelpComponent, UploadPhotosGuideComponent, PrivacyPolicyComponent]
 })
 export class HelpModule { }
