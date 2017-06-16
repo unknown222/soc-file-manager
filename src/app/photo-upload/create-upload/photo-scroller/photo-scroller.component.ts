@@ -24,7 +24,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
   initLoading: boolean;
 
   scrollObserver: ConnectableObservable<any[]>;
-  options = Observable.of({ itemWidth: 250, itemHeight: 250, numAdditionalRows: 1 });
+  options = Observable.of({ itemWidth: 202, itemHeight: 202, numAdditionalRows: 1 });
 
   private _scrollEnd$ = this._scrollObs.scrollWin$.filter(([ scrollWin ]) => scrollWin.visibleEndRow !== -1 && scrollWin.visibleEndRow === scrollWin.numVirtualRows - 1);
   scrollTop$: Subject<SetScrollTopCmd> = new Subject();
@@ -79,6 +79,7 @@ export class PhotoScrollerComponent implements OnInit, OnChanges {
         }));
 
         this.scrollTop$.next(new SetScrollTopCmd(0));
+        this.resize$.next(null);
         observer.next(this.data);
 
         return function unsubscribe() {

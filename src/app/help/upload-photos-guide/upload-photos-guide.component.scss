@@ -1,0 +1,43 @@
+@import "../../../resources/theme";
+
+:host {
+  margin: 12px;
+  max-width: 850px;
+  display: flex;
+}
+
+.small-img {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.large-img {
+  max-width: 550px;
+  max-height: 550px;
+}
+
+a:active {
+  color: mat-color($accent);
+}
+
+a:hover {
+  color: mat-color($accent);
+}
+
+a:hover:visited {
+  color: mat-color($accent, A400);
+}
+
+a:visited {
+  color: mat-color($primary, 800);
+}
+
+a {
+  color: mat-color($primary, 800);
+  text-decoration: none;
+}
+
+
+p.warn {
+  color: mat-color($warn);
+}

@@ -1,3 +1,17 @@
-<p>
-  in development
-</p>
+<md-sidenav-container>
+  <md-sidenav #helpNavigation opened="true" mode="side">
+    <md-nav-list>
+      <h3 md-subheader>Guides</h3>
+      <md-list-item routerLink="./upload-photos-guide"
+                    [routerLinkActive]="['active']">
+        <md-icon md-list-icon>burst_mode</md-icon>
+        <p md-line> Upload photos </p>
+      </md-list-item>
+    </md-nav-list>
+  </md-sidenav>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+
+</md-sidenav-container>
