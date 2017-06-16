@@ -6,6 +6,7 @@ import { Album } from '../../core/social-provider/entities/album';
 import { Photo } from '../../core/social-provider/entities/photo';
 import { MdSnackBar } from '@angular/material';
 import { PhotoScrollerComponent } from './photo-scroller/photo-scroller.component';
+import { ProviderNames } from '../../core/social-provider/entities/provider-names';
 
 @Component({
   selector: 'app-create-upload',
@@ -18,6 +19,7 @@ export class CreateUploadComponent implements OnInit {
   uploadDestination: Album;
   uploadSource: Album;
   loadedViewPhotos: Array<Photo> = [];
+  providerNames =  ProviderNames;
 
   uploadConfigs: any = {
     from: 0,

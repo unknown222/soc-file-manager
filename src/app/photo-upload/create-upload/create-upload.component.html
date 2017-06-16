@@ -42,7 +42,13 @@
     <button md-button (click)="start()"
             [disabled]="!uploadConfigs.valid || !uploadSource || !uploadDestination || !loadedViewPhotos || loadedViewPhotos.length < 1">
       <md-icon>file_upload</md-icon>
-      START UPLOAD
+      <span *ngIf="!uploadDestination">
+        Upload
+      </span>
+      <span *ngIf="uploadDestination">
+          Upload to {{providerNames[uploadDestination.provider]}}
+      </span>
+
     </button>
   </md-card-actions>
 </md-card>
