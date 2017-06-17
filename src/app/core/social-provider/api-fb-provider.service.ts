@@ -23,14 +23,23 @@ import { Photo } from 'app/core/social-provider/entities/photo';
 @Injectable()
 export class ApiFbProviderService implements ApiProvider {
 
-
   name = ProviderNames[ Providers.FB ];
   type = Providers.FB;
   status = ProviderStatuses.UNDEFINED;
   initRequest = new AsyncSubject();
 
   constructor(private fb: FacebookService, private http: Http) {
-    this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest);
+    this.loadScript('https://connect.facebook.net/en_US/sdk.js');
+  }
+
+  loadScript(src) {
+    let node = document.createElement('script');
+    node.src = src;
+    node.type = 'text/javascript';
+    node.onload = () => {
+      this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest, console.warn);
+    };
+    document.getElementsByTagName('head')[ 0 ].appendChild(node);
   }
 
   init() {
@@ -126,8 +135,8 @@ export class ApiFbProviderService implements ApiProvider {
 
       let result: any = { data: photos };
 
-      if(response.paging) {
-        response.pointerNext =  response.paging.next;
+      if (response.paging) {
+        response.pointerNext = response.paging.next;
       }
 
       if (!result.pointerNext) {
