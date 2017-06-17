@@ -12,6 +12,7 @@ export interface ApiProvider {
   name: string;
   type: Providers;
   status: ProviderStatuses;
+  loadSDK(src: string): void;
   init(): Observable<any>;
   login(): Observable<any>;
   logout(): Observable<any>;

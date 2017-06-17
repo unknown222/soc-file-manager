@@ -29,15 +29,20 @@ export class ApiFbProviderService implements ApiProvider {
   initRequest = new AsyncSubject();
 
   constructor(private fb: FacebookService, private http: Http) {
-    this.loadScript('https://connect.facebook.net/en_US/sdk.js');
+    this.loadSDK('https://connect.facebook.net/en_US/sdk.js');
   }
 
-  loadScript(src) {
+  loadSDK(src) {
     let node = document.createElement('script');
     node.src = src;
     node.type = 'text/javascript';
     node.onload = () => {
       this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest, console.warn);
+    };
+
+    node.onerror = () => {
+      console.error('failed to load FB sdk');
+      this.status = ProviderStatuses.ERROR;
     };
     document.getElementsByTagName('head')[ 0 ].appendChild(node);
   }

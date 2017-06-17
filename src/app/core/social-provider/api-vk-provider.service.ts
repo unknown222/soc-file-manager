@@ -27,15 +27,20 @@ export class ApiVkProviderService implements ApiProvider {
   initRequest = new AsyncSubject();
 
   constructor(private http: Http, private zone: NgZone) {
-    this.loadScript('https://vk.com/js/api/openapi.js?146');
+    this.loadSDK('https://vk.com/js/api/openapi.js?146');
   }
 
-  loadScript(src) {
+  loadSDK(src) {
     let node = document.createElement('script');
     node.src = src;
     node.type = 'text/javascript';
     node.onload = () => {
       this.init().mergeMap(() => this.checkLoginStatus()).subscribe(this.initRequest, console.warn);
+    };
+
+    node.onerror = () => {
+      console.error('failed to load VK sdk');
+      this.status = ProviderStatuses.ERROR;
     };
     document.getElementsByTagName('head')[ 0 ].appendChild(node);
   }
